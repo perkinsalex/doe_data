@@ -12,19 +12,19 @@ import numpy as np
 # Parameters 
 theta = 1
 beta = 1
+y_max = 6.5   # max investment value on x-axis
+cap = 60      # asymptote for reduction (%)
 
 # Generate y (investment) values
-y = np.linspace(0, 6.5, 400)
-x = (1/beta) * np.log(y/theta + 1)
+y = np.linspace(0, y_max, 400)
 
-# Scale so that the max is 60% reduction
-x_pct = 60 * x / np.max(x)
+# Rescaled log function: tops out at 60
+x_pct = cap * np.log(y/theta + 1) / np.log(y_max/theta + 1)
 
 # Reference points
 y1, y2 = 0.6487, 2.317
-x1 = (1/beta) * np.log(y1/theta + 1)
-x2 = (1/beta) * np.log(y2/theta + 1)
-x1_pct, x2_pct = 60 * x1 / np.max(x), 60 * x2 / np.max(x)
+x1_pct = cap * np.log(y1/theta + 1) / np.log(y_max/theta + 1)
+x2_pct = cap * np.log(y2/theta + 1) / np.log(y_max/theta + 1)
 
 # Plot
 plt.figure(figsize=(8,6))
@@ -44,15 +44,21 @@ plt.annotate(r'$\Delta x$', xy=((y1+y2)/2, x2_pct+1), ha='center')
 plt.annotate(r'$\Delta y$', xy=(y1-0.2, (x1_pct+x2_pct)/2), va='center', rotation=90)
 
 # Add horizontal line at 60%
-plt.axhline(60, color='blue', linestyle='--', alpha=0.8)
-plt.text(y[-1]+0.1, 60, "60% reduction", va='center', color='blue')
+plt.axhline(cap, color='blue', linestyle='--', alpha=0.8)
+
+# Place the label inside the plot area, near the right edge
+plt.text(y[-1]*0.85, cap+1, "60% reduction", va='bottom', ha='left',
+         color='blue', bbox=dict(facecolor='white', edgecolor='none', alpha=0.7))
+
 
 # Labels and title
 plt.title("Inverse Exponential Investment Function")
 plt.xlabel("y (total investment)")
 plt.ylabel("x (reduction in fuel use, %)")
 plt.legend()
-plt.ylim(0, 60)
+
+# Extend y-axis slightly above 60 to show it's a cap
+plt.ylim(0, 70)
 plt.grid(True, linestyle='--', alpha=0.6)
 
 plt.show()
